@@ -108,7 +108,7 @@ void interface::DialogOBJ()
     if(!filetemporaire.isEmpty())
     {
         string file;
-        file = filetemporaire.toStdString();
+        file = filetemporaire.toStdString();/*
         //----------------------------
         int filesize = filetemporaire.size();
         QProgressDialog progressDialog(this);
@@ -129,9 +129,9 @@ void interface::DialogOBJ()
 
             if (progressDialog.wasCanceled())
                 break;
-        }
+        }*/
         //----------------------------
-        //objetteste.loadobjet(file);
+        objetteste.loadobjet(file);
     }
 }
 

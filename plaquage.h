@@ -18,6 +18,7 @@ public:
     float getYbarycentrecoord();
     float getXbarycentrecoord();
     QVector<QVector3D> getintersection(QVector<QVector3D> vertex);
+    QVector<QVector3D>  trieintersect(QVector<QVector3D> vertex,QVector<QVector3D> intesct);
     void plaquercube();
     bool onSegment(QVector3D p, QVector3D q, QVector3D r);
     bool invertex(QVector3D p,QVector<QVector3D> vertex);
@@ -29,7 +30,6 @@ public:
     QVector<QVector3D> vertexbaseplaquer(QVector<QVector3D> intersection);
     bool surporpose(QVector3D a,QVector3D b,QVector3D c,QVector3D d);
     bool sommet(QVector3D vertex);
-    QVector<QVector3D> ikhan(QVector<QVector3D> vertex, QVector<QVector3D> triangles);
     float distancetwopoints(QVector3D a,QVector3D b);
     bool isequalplanime(QVector3D a,QVector3D b);
     void setmontab(QVector<QVector3D> tab);
@@ -40,6 +40,8 @@ public:
     QVector3D ptintersect(QVector3D p0, QVector3D p1, QVector3D p2, QVector3D p3);
     QVector<float> boundsofintersection(QVector<QVector3D> intersection);
     QVector<QVector3D> sortofintersection(QVector<QVector3D> intersection, QVector<QVector3D> vertex);
+    void setZreal(QVector<QVector3D> points);
+
 
 
 

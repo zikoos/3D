@@ -190,43 +190,49 @@ float objet::getzMin(){
 //******* le tableau d'intersection d'un segment avec l'MNT
 void objet::segment_intersection()
 {
-    QVector<QVector3D>  interspoints;
+    QVector<QVector3D>  interspoints,interspoints1,interspoints2,interspoints3;
     interspoints = plaquageteste.findintersectpoint(segmentAB,mntteste.getmontab());
     plaquercube(segmentAB, interspoints);
-//    interspoints.clear();
-//    interspoints = plaquageteste.findintersectpoint(segmentBC,mntteste.getmontab());
-//    plaquercube(segmentBC, interspoints);
-//    interspoints.clear();
-//    interspoints = plaquageteste.findintersectpoint(segmentCD,mntteste.getmontab());
-//    plaquercube(segmentCD, interspoints);
-//    interspoints.clear();
-//    interspoints = plaquageteste.findintersectpoint(segmentDA,mntteste.getmontab());
-//    plaquercube(segmentDA, interspoints);
-//    interspoints.clear();
+
+    interspoints1 = plaquageteste.findintersectpoint(segmentBC,mntteste.getmontab());
+    plaquercube(segmentBC, interspoints1);
+
+    interspoints2 = plaquageteste.findintersectpoint(segmentCD,mntteste.getmontab());
+    plaquercube(segmentCD, interspoints2);
+
+    interspoints3 = plaquageteste.findintersectpoint(segmentDA,mntteste.getmontab());
+
+    plaquercube(segmentDA, interspoints3);
 
 }
 
 //*******plaquagecube
-QVector<QVector3D>  objet::plaquercube(QVector<QVector3D> segment,QVector<QVector3D>  interspoints){
-    QVector<QVector3D> bol;
-
-    for(unsigned int i=0;i<tabcube.size()-1;++i){
+void objet::plaquercube(QVector<QVector3D> segment,QVector<QVector3D>  interspoints){
 
 
-        if(tabcube[i]==segment[0]&&tabcube[i+1]==segment[1]){
-            for(unsigned int j=0;j<interspoints.size();++j){
-                bol.push_back(interspoints[j]);
 
 
+    for(size_t i=0;i<tabcube.size()-1;i++){
+
+
+
+        if(plaquageteste.isequalplanime(tabcube[i],segment[0])  && plaquageteste.isequalplanime(tabcube[i+1],segment[1]) ){
+
+            tabcube[i].setX(interspoints[0].x());
+            tabcube[i].setY(interspoints[0].y());
+            tabcube[i].setZ(interspoints[0].z());
+            int j=1;
+            for(;j<interspoints.size()-1;j++){
+
+                tabcube.insert(tabcube.begin()+i+j, interspoints[j]);
             }
-            i=i+2;
+            tabcube[i+j].setX(interspoints[interspoints.size()-1].x());
+            tabcube[i+j].setY(interspoints[interspoints.size()-1].y());
+            tabcube[i+j].setZ(interspoints[interspoints.size()-1].z());
 
-        }else
-        bol.push_back(tabcube[i]);
+        }
 
     }
-    return bol;
-
 
 
 }
@@ -340,11 +346,12 @@ bool objet::insommets(QVector3D p,QVector<QVector3D> vertex){
 void objet:: adapterObjet() //float x, float y, float z)
 
 {
-    float x=900000, y=1944980, z=1073;
-    float width=20, height=20, length=20;
+    //900000.00 1944975.00 1073.00
+    float x=900015, y=1944965, z=1073;
+    float width=25, height=25, length=25;
 
-    QVector3D A(x+width,y+height,z), B(x+width,y,z), C(x,y,z), D(x,y+height,z), E(x+width,y+height,z+length), F(x,y+height,z+length), G(x,y,z+length), H(x+width,y,z+length);
-    QVector3D testA(900000,1944980,1073),testB(900025,1944980,1073);
+    QVector3D A(x+width,y-height,z), B(x+width,y,z), C(x,y,z), D(x,y-height,z), E(x+width,y-height,z+length), F(x,y-height,z+length), G(x,y,z+length), H(x+width,y,z+length);
+   //QVector3D testA(900000,1944980,1073),testB(900025,1944980,1073);
             tabcube.push_back(H);
             tabcube.push_back(B);
             tabcube.push_back(C);
@@ -362,15 +369,22 @@ void objet:: adapterObjet() //float x, float y, float z)
             tabcube.push_back(A);
             tabcube.push_back(B);
 
-            segmentAB.push_back(testA);
-            segmentAB.push_back(testB);
 
-            //segmentAB.push_back(A);
-            //segmentAB.push_back(B);
+            //plaquageteste.setZreal(tabcube);
+
+
+            //segmentAB.push_back(testA);
+            //segmentAB.push_back(testB);
+
+            segmentAB.push_back(A);
+            segmentAB.push_back(B);
+
             segmentBC.push_back(B);
             segmentBC.push_back(C);
-            segmentBC.push_back(C);
+
+            segmentCD.push_back(C);
             segmentCD.push_back(D);
+
             segmentDA.push_back(D);
             segmentDA.push_back(A);
 

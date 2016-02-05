@@ -33,7 +33,7 @@ public:
     void drawobjetfinal();
     //----------------------
     void drawobjetcouper();
-    QVector<QVector3D>  plaquercube(QVector<QVector3D> segment,QVector<QVector3D>  interspoints);
+    void plaquercube(QVector<QVector3D> segment,QVector<QVector3D>  interspoints);
     bool insommets(QVector3D p,QVector<QVector3D> vertex);
 
 private :
@@ -49,9 +49,6 @@ private :
     QVector<float> normals;
     QVector<float> textures;
     QVector<unsigned int> index;
-
-
-
     QVector<QVector3D> tabcube;
     QVector<QVector3D> segmentAB;
     QVector<QVector3D> segmentBC;

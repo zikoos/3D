@@ -71,7 +71,7 @@ ViewerObjetF::ViewerObjetF(QWidget *parent) : QGLViewer(parent)
 
 void ViewerObjetF::init()
 {
-    setSceneBoundingBox(qglviewer::Vec(900000, 1944980, 1073), qglviewer::Vec(900000+100,1944980+100,1073+1600));
+    setSceneBoundingBox(qglviewer::Vec(900000, 1944980, 1073), qglviewer::Vec(900000+100,1944980+100,1073+200));
     showEntireScene();
 
 }

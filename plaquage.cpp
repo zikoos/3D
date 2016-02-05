@@ -41,9 +41,9 @@ QVector<QVector3D> plaquage::getintersection(QVector<QVector3D> vertex){
     QVector<QVector3D> result;
     //float alpha=-99,beta=-99,gamma=-99,alpha1=-99,beta1=-99,gamma1=-99;
 
-    for(unsigned int i=0;i<vertex.size();++i)
+    for(size_t i=0;i<vertex.size();++i)
     {
-        for(unsigned int j=0; j<montab.size()-4000;++j){
+        for(size_t j=0; j<montab.size()-4000;++j){
             const float alpha = (((montab[j+1].y() -montab[j+4000].y())*(vertex[i].x() - montab[j+4000].x()) + (montab[j+4000].x() - montab[j+1].x())*(vertex[i].y() - montab[j+4000].y())) /((montab[j+1].y() -montab[j+4000].y())*(montab[j].x() - montab[j+4000].x()) + (montab[j+4000].x() - montab[j+1].x())*(montab[j].y() - montab[j+4000].y())));
             const float beta = ((montab[j+4000].y() - montab[j+1].y())*(vertex[i].x() - montab[j+4000].x()) + (montab[j].x() - montab[j+4000].x())*(vertex[i].y() - montab[j+4000].y())) /((montab[j+1].y() - montab[j+4000].y())*(montab[j].x() - montab[j+4000].x()) + (montab[j+4000].x() - montab[j+1].x())*(montab[j].y() - montab[j+4000].y()));
             const float gamma = 1 - alpha - beta;
@@ -84,15 +84,10 @@ bool plaquage::onSegment(QVector3D p, QVector3D q, QVector3D r)
 }
 
 
-// To find orientation of ordered triplet (p, q, r).
-// The function returns following values
-// 0 --> p, q and r are colinear
-// 1 --> Clockwise
-// 2 --> Counterclockwise
+
 int plaquage::orientation(QVector3D p, QVector3D q, QVector3D r)
 {
-    // See 10th slides from following link for derivation of the formula
-    // http://www.dcs.gla.ac.uk/~pat/52233/slides/Geometry1x1.pdf
+
     int val = (q.y() - p.y()) * (r.x()- q.x()) -
               (q.x() - p.x()) * (r.y() - q.y());
 
@@ -102,8 +97,7 @@ int plaquage::orientation(QVector3D p, QVector3D q, QVector3D r)
 }
 
 
-// The main function that returns true if line segment 'p1q1'
-// and 'p2q2' intersect.
+
 bool plaquage::doIntersect(QVector3D p1, QVector3D q1, QVector3D p2, QVector3D q2)
 {
     // Find the four orientations needed for general and
@@ -219,196 +213,6 @@ QVector<QVector3D> plaquage::getbounds(QVector<QVector3D> vertex){
     return res;
 
 }
-/*
-
-QVector<QVector3D> plaquage::findintersectpoint(QVector<QVector3D> vertex,QVector<QVector3D> bounds){
-    /*int ypas=25;
-    int xpas=25;
-    int nbrpointy= (bounds[0].y()-bounds[1].y())/ypas+1;
-    int nbrpointx= (bounds[1].x()-bounds[0].x())/xpas+1;
-    QVector3D one,two,tree;
-    QVector3D intersection;
-    QVector<QVector3D> res;
-
-    for(unsigned int j=0;j<vertex.size()-1;++j)
-    {
-        float i=bounds[0].y();
-
-            for(int conty=0;conty<nbrpointy-1;++conty){
-                float k=bounds[0].x();
-                for(int contx=0;contx<nbrpointx-1;++contx)
-                {
-                        one.setY(i);
-                        one.setX(k);
-                        two.setY(i);
-                        two.setX(k-xpas);
-                        tree.setY(i+ypas);
-                        tree.setX(k);
-
-                        k=k+xpas;
-
-                        if(doIntersect(one,two,vertex[j],vertex[j+1])){
-                            intersection =getintersectionoftwolines(one,two,vertex[j],vertex[j+1]);
-                            res.push_back(intersection);
-                            res.push_back(one);
-                            res.push_back(two);
-                            res.push_back(tree);
-
-
-                        }
-                        if(doIntersect(two,tree,vertex[j],vertex[j+1])){
-                            intersection =getintersectionoftwolines(two,tree,vertex[j],vertex[j+1]);
-                            res.push_back(intersection);
-                            res.push_back(one);
-                            res.push_back(two);
-                            res.push_back(tree);
-
-                        }
-                        if(doIntersect(tree,one,vertex[j],vertex[j+1])){
-                            intersection =getintersectionoftwolines(tree,one,vertex[j],vertex[j+1]);
-                            res.push_back(intersection);
-                            res.push_back(one);
-                            res.push_back(two);
-                            res.push_back(tree);
-
-                        }
-                }
-                i=i+ypas;
-
-            }
-    }
-    return res;
-    /**************************************************ikhan**********************************
-     QVector<QVector3D> res ;
-
-     for(unsigned int j=0;j<vertex.size()-1;++j){
-        for (unsigned int i=0;i<montab.size()-4001;++i){
-           // if(montab[i+4003].x()!=bounds[3].x() && montab[i+4003].y()!=bounds[3].y()){
-            if(surporpose(montab[i],montab[i+1],vertex[j],vertex[j+1])){
-                res.push_back(montab[i]);
-                res.push_back(montab[i]);
-                res.push_back(montab[i+1]);
-                res.push_back(montab[i+4000]);
-                res.push_back(montab[i+1]);
-                res.push_back(montab[i]);
-                res.push_back(montab[i+1]);
-                res.push_back(montab[i+4000]);
-                break;
-            }else
-                if(surporpose(montab[i+1],montab[i+4000],vertex[j],vertex[j+1])){
-                    res.push_back(montab[i+1]);
-                    res.push_back(montab[i]);
-                    res.push_back(montab[i+1]);
-                    res.push_back(montab[i+4000]);
-                    res.push_back(montab[i+4000]);
-                    res.push_back(montab[i]);
-                    res.push_back(montab[i+1]);
-                    res.push_back(montab[i+4000]);
-                    break;
-                }else
-                    if(surporpose(montab[i],montab[i+4000],vertex[j],vertex[j+1])){
-                        res.push_back(montab[i]);
-                        res.push_back(montab[i]);
-                        res.push_back(montab[i+1]);
-                        res.push_back(montab[i+4000]);
-                        res.push_back(montab[i+4000]);
-                        res.push_back(montab[i+4000]);
-                        res.push_back(montab[i+1]);
-                        res.push_back(montab[i+4000]);
-                        break;
-                    }else
-                    if(surporpose(montab[i],montab[i+1],vertex[j],vertex[j+1])){
-                        res.push_back(montab[i]);
-                        res.push_back(montab[i]);
-                        res.push_back(montab[i+1]);
-                        res.push_back(montab[i+4000]);
-                        res.push_back(montab[i+1]);
-                        res.push_back(montab[i]);
-                        res.push_back(montab[i+1]);
-                        res.push_back(montab[i+4000]);
-                        break;
-                    }else
-                        if(invertex(montab[i],vertex)){
-                            res.push_back(montab[i]);
-                            res.push_back(montab[i]);
-                            res.push_back(montab[i+1]);
-                            res.push_back(montab[i+4000]);
-                        }else if(invertex(montab[i+1],vertex )){
-                            res.push_back(montab[i+1]);
-                            res.push_back(montab[i]);
-                            res.push_back(montab[i+1]);
-                            res.push_back(montab[i+4000]);
-
-                        }else if(invertex(montab[i+4000],vertex)){
-                            res.push_back(montab[i+4000]);
-                            res.push_back(montab[i]);
-                            res.push_back(montab[i+1]);
-                            res.push_back(montab[i+4000]);
-
-                            }else{
-
-                                     if(doIntersect(montab[i],montab[i+1],vertex[j],vertex[j+1])){
-                                         QVector3D intersection =getintersectionoftwolines(montab[i],montab[i+1],vertex[j],vertex[j+1]);
-                                         res.push_back(intersection);
-                                         res.push_back(montab[i]);
-                                         res.push_back(montab[i+1]);
-                                         res.push_back(montab[i+4000]);
-
-
-                                     }
-                                     if(doIntersect(montab[i+4000],montab[i+1],vertex[j],vertex[j+1])){
-                                        QVector3D  intersection =getintersectionoftwolines(montab[i+4000],montab[i+1],vertex[j],vertex[j+1]);
-                                         res.push_back(intersection);
-                                         res.push_back(montab[i]);
-                                         res.push_back(montab[i+1]);
-                                         res.push_back(montab[i+4000]);
-
-                                     }
-                                     if(doIntersect(montab[i],montab[i+4000],vertex[j],vertex[j+1])){
-                                         QVector3D intersection =getintersectionoftwolines(montab[i],montab[i+4000],vertex[j],vertex[j+1]);
-                                         res.push_back(intersection);
-                                         res.push_back(montab[i]);
-                                         res.push_back(montab[i+1]);
-                                         res.push_back(montab[i+4000]);
-
-                                     }
-            }
-
-
-
-
-                     /*
-                      * ********************************
-                     if(doIntersect(montab[i+1],montab[i+4001],vertex[j],vertex[j+1])){
-                         intersection =getintersectionoftwolines(montab[i+1],montab[i+4000],vertex[j],vertex[j+1]);
-                         res.push_back(intersection);
-                         res.push_back(montab[i+1]);
-                         res.push_back(montab[i+4000]);
-                         res.push_back(montab[i+4001]);
-
-
-                     }
-
-
-                     if(doIntersect(montab[i+4000],montab[i+4001],vertex[j],vertex[j+1])){
-                         intersection =getintersectionoftwolines(montab[i+4000],montab[i+4001],vertex[j],vertex[j+1]);
-                         res.push_back(intersection);
-                         res.push_back(montab[i+1]);
-                         res.push_back(montab[i+4000]);
-                         res.push_back(montab[i+4001]);
-
-                     }
-                     //if(montab[i].x()==bounds[3].x() && montab[i].y()==bounds[3].y())
-                       //  break;
-
-
-                 //}else break;
-        }
-     }
-
-return res;
-}
-*/
 
 
 QVector<QVector3D> plaquage::vertexbaseplaquer(QVector<QVector3D> intersection)
@@ -515,193 +319,6 @@ bool plaquage::sommet(QVector3D vertex){
 
 
 
-QVector<QVector3D> plaquage::ikhan(QVector<QVector3D> vertex, QVector<QVector3D> triangles){
-    QVector<QVector3D> res;
-    QVector3D old1,old2;
-    bool premier =false;
-
-    /*for(unsigned int k=0;k<triangles.size()-4;k=k+4){*/
-        //int k=0;
-        for(unsigned int i=0;i<vertex.size();++i){
-            if(!premier){
-                res.push_back(vertex[i]);
-                premier=true;
-            }else
-
-            if(!isequalplanime(vertex[i],res[res.size()-1]))
-            res.push_back(vertex[i]);
-            //res.push_back(triangles[k+1]);
-            //res.push_back(triangles[k+2]);
-            //res.push_back(triangles[k+3]);
-            //k=k+4;
-
-            for (unsigned int j=0;j<montab.size()-4001;++j){
-
-                {
-                if(doIntersect(montab[j],montab[j+1],vertex[i],vertex[i+1])){
-
-                                if(collinear(montab[j],montab[j+1],vertex[i],vertex[i+1])){
-                                     //distance
-                                     float d1=distancetwopoints(montab[j],montab[j+1]);
-                                     float d2=distancetwopoints(vertex[i],vertex[i+1]);
-                                        if(d1<=d2){
-                                            if(!isequalplanime(montab[j+1],res[res.size()-1]))
-                                            res.push_back(montab[j+1]);
-                                            //res.push_back(montab[j]);
-                                            //res.push_back(montab[j+1]);
-                                            //res.push_back(montab[j+4000]);
-
-
-                                           //if(!isequalplanime(montab[j+1],res[res.size()-1]))
-                                            //res.push_back(montab[j+1]);
-                                            //res.push_back(montab[j+1]);
-                                            //res.push_back(montab[j+4001]);
-                                            //res.push_back(montab[j+4000]);
-                                            //j=j+1;
-                                            //break;
-                                        }else if(d1>d2){
-                                           if(!isequalplanime(vertex[i+1],res[res.size()-1]))
-                                            res.push_back(vertex[i]);
-                                            //res.push_back(montab[j]);
-                                            //res.push_back(montab[j+1]);
-                                            //res.push_back(montab[j+4000]);
-
-                                           //if(!isequalplanime(vertex[i+1],res[res.size()-1]))
-                                            //res.push_back(vertex[i+1]);
-                                            //res.push_back(montab[j]);
-                                            //res.push_back(montab[j+4001]);
-                                            //res.push_back(montab[j+4000]);
-                                            //break;
-
-                                        }
-
-                                 }else {
-                                     QVector3D intersection =getintersectionoftwolines(montab[j],montab[j+1],vertex[i],vertex[i+1]);
-                                     //if(!sommet(intersection)){
-                                     if(!isequalplanime(intersection ,res[res.size()-1]))
-                                         res.push_back(intersection);
-                                         //res.push_back(montab[j]);
-                                         //res.push_back(montab[j+1]);
-                                         //res.push_back(montab[j+4000]);
-                                         //break;
-                                     //}
-
-
-                                 }
-                }}
-                 /********************************************/
-                     {if(doIntersect(montab[j+1],montab[j+4000],vertex[i],vertex[i+1])){
-                             if(collinear(montab[j+1],montab[j+4000],vertex[i],vertex[i+1])){
-                                 //distance
-                                 float da=distancetwopoints(montab[j+1],montab[j+4000]);
-                                 float db=distancetwopoints(vertex[i],vertex[i+1]);
-                                    if(da<=db){
-                                        if(!isequalplanime(montab[j+1],res[res.size()-1]))
-                                        res.push_back(montab[j+1]);
-                                        //res.push_back(montab[j]);
-                                        //res.push_back(montab[j+1]);
-                                        //res.push_back(montab[j+4000]);
-                                       // if(!isequalplanime(montab[j+4000],res[res.size()-1]))
-                                        //res.push_back(montab[j+4000]);
-                                        //res.push_back(montab[j]);
-                                        //res.push_back(montab[j+1]);
-                                        //res.push_back(montab[j+4000]);
-                                        //j=j+1;
-                                        //break;
-                                    }else{
-                                        //if(!isequalplanime(vertex[i],res[res.size()-1]))
-                                        //res.push_back(vertex[i]);
-                                        //res.push_back(montab[j]);
-                                        //res.push_back(montab[j+1]);
-                                        //res.push_back(montab[j+4000]);
-                                        if(!isequalplanime(vertex[i+1],res[res.size()-1]))
-                                        res.push_back(vertex[i+1]);
-                                        //res.push_back(montab[j]);
-                                        //res.push_back(montab[j+1]);
-                                        //res.push_back(montab[j+4000]);
-                                        //break;
-
-                                    }
-                             }else {
-                                 QVector3D intersection =getintersectionoftwolines(montab[j],montab[j+1],vertex[i],vertex[i+1]);
-                                 //if(sommet(intersection)){
-                                 if(!isequalplanime(intersection,res[res.size()-1]))
-
-                                 res.push_back(intersection);
-                                 //res.push_back(montab[j+4000]);
-                                 //res.push_back(montab[j+1]);
-                                 //res.push_back(montab[j+4000]);
-                                 //break;
-                                 //}
-
-
-                             }
-
-                 }}
-
-                 /**********************************************/
-            {if(doIntersect(montab[j+4000],montab[j],vertex[i],vertex[i+1])){
-                 if(collinear(montab[j+4000],montab[j],vertex[i],vertex[i+1])){
-                     //distance
-                     float dp=distancetwopoints(montab[j+4000],montab[j]);
-                     float dq=distancetwopoints(vertex[i],vertex[i+1]);
-                        if(dp<=dq){
-                            if(!isequalplanime(montab[j+4000],res[res.size()-1]))
-                            res.push_back(montab[j+4000]);
-                            //res.push_back(montab[j]);
-                            //res.push_back(montab[j+1]);
-                            //res.push_back(montab[j+4000]);
-                            //if(!isequalplanime(montab[j],res[res.size()-1]))
-                            //res.push_back(montab[j]);
-                            //res.push_back(montab[j]);
-                            //res.push_back(montab[j+1]);
-                            //res.push_back(montab[j+4000]);
-                            //j=j+1;
-                            //break;
-                        }else{
-                            if(!isequalplanime(vertex[i],res[res.size()-1]))
-                            res.push_back(vertex[i]);
-                            //res.push_back(montab[j]);
-                            //res.push_back(montab[j+1]);
-                            //res.push_back(montab[j+4000]);
-                          //  if(!isequalplanime(vertex[i],res[res.size()-1]))
-                            //res.push_back(vertex[i]);
-                            //res.push_back(montab[j]);
-                            //res.push_back(montab[j+1]);
-                            //res.push_back(montab[j+4000]);
-                            //break;
-
-                        }
-                 }else {
-                     QVector3D intersection =getintersectionoftwolines(montab[j],montab[j+1],vertex[i],vertex[i+1]);
-                     //if(!sommet(intersection)){
-                     if(!isequalplanime(intersection,res[res.size()-1]))
-
-                     res.push_back(intersection);
-                     //res.push_back(montab[j]);
-                     //res.push_back(montab[j+1]);
-                     //res.push_back(montab[j+4000]);
-                    // break;
-                    //}
-
-                 }}
-            }
-
-
-           // double mod =fmod(j+1,4000);
-            //if(mod==0) j=j+1;
-            }
-
-
-
-        //}
-
-    }
-    return res;
-
-}
-
-
 
 
 
@@ -791,124 +408,133 @@ QVector<QVector3D> plaquage::findintersectpoint(QVector<QVector3D> vertex, QVect
     QVector<QVector3D> res;
     QVector<QVector3D> res2;
     QVector3D inters;
-    res.push_back(vertex[0]);
+    //res.push_back(vertex[0]);
+    bool segment1=true;
+    bool segment2=true;
+    bool segment3=true;
+    bool premier=true;
+    bool dernier=true;
+    int mdxV1=fmod(vertex[0].x(),25);
+    int mdyV1=fmod(vertex[0].y(),25);
+    int mdxV2=fmod(vertex[1].x(),25);
+    int mdyV2=fmod(vertex[1].y(),25);
 
-        for (unsigned int i=0;i<=vertex.size();++i){
 
 
-            for (unsigned int j=0;j<montab.size()-4000;++j){
 
-                if(isequalplanime(montab[j],vertex[i])){
+            for (size_t j=0;j<montab.size()-4000;++j){
+
+                /*if(isequalplanime(montab[j],vertex[0])){
                     if(!isequalplanime(montab[j],res[res.size()-1])&&!invertex(montab[j],res)){
                         res.push_back(montab[j]);
-                        break;
+                        //break;
                     }
 
-                }/*else*/ {
-                            if(doIntersect(montab[j],montab[j+1],vertex[i],vertex[i+1])){
+                }*/
+
+                    if(segment1 ){
 
 
-                                        if(collinear(montab[j],montab[j+1],vertex[i],vertex[i+1])){
-                                            {
-                                                float da=distancetwopoints(montab[j],montab[j+1]);
-                                                float db=distancetwopoints(vertex[i],vertex[i+1]);
-                                                if(da<=db){
-                                                        if(!isequalplanime(montab[j],res[res.size()-1])&&!invertex(montab[j],res)){
+                                if(collinear(montab[j+1],montab[j],vertex[0],vertex[1]) && mdxV1==0 && mdyV1==0){
+                                    if(doIntersect(montab[j+1],montab[j],vertex[0],vertex[1])){
+                                        float da=distancetwopoints(montab[j],montab[j+1]);
+                                        float db=distancetwopoints(vertex[0],vertex[1]);
+                                        if(da<=db){
+                                                if(!invertex(montab[j],res)){
 
-                                                            res.push_back(montab[j]);
-                                                        }
-                                                }else{
-                                                    if(!isequalplanime(vertex[i],res[res.size()-1])&&!invertex(vertex[i],res)){
-                                                        res.push_back(vertex[i]);
-                                                        if(!isequalplanime(vertex[i+1],res[res.size()-1])&&!invertex(vertex[i+1],res)){
-                                                        res.push_back(vertex[i+1]);
-                                                        i=i+1;
-                                                        }
-                                                    }
+                                                    res.push_back(montab[j]);
 
                                                 }
-
+                                        }else{
+                                            if(!invertex(vertex[1],res)){
+                                                res.push_back(vertex[1]);
+                                                break;
+                                                }
                                             }
-                                        }else{//ici
-                                            inters=ptintersect(montab[j],montab[j+1],vertex[i],vertex[i+1]);
-                                            if(!isequalplanime(inters,res[res.size()-1])&&!invertex(inters,res))
-
-                                                res.push_back(inters);
 
                                         }
 
-                            }
+
+
+                                }else {segment1=false;}
+
+
+                    }
+
+
                             /**************************************************************/
-                            if(doIntersect(montab[j+1],montab[j+4000],vertex[i],vertex[i+1])){
+                            if(segment2){
 
 
-                                        if(collinear(montab[j+1],montab[j+4000],vertex[i],vertex[i+1])){
-                                            {
+                                        if(collinear(montab[j+1],montab[j+4000],vertex[0],vertex[1])&& mdxV1==0 && mdyV1==0){
+                                            {if(doIntersect(montab[j+1],montab[j+4000],vertex[0],vertex[1])){
                                                 float da=distancetwopoints(montab[j+1],montab[j+4000]);
-                                                float db=distancetwopoints(vertex[i],vertex[i+1]);
+                                                float db=distancetwopoints(vertex[0],vertex[1]);
                                                 if(da<=db){
-                                                        if(!isequalplanime(montab[j+1],res[res.size()-1])&&!invertex(montab[j+4000],res)){
+                                                        if(!invertex(montab[j+1],res)){
 
                                                             res.push_back(montab[j+1]);
                                                         }
+
+
                                                 }else{
-                                                    if(!isequalplanime(vertex[i],res[res.size()-1]) &&!invertex(vertex[i],res)){
-                                                        res.push_back(vertex[i]);
-                                                        if(!isequalplanime(vertex[i+1],res[res.size()-1])&&!invertex(vertex[i+1],res)){
-                                                        res.push_back(vertex[i+1]);
-                                                        i=i+1;
-                                                        }
+                                                    if(!invertex(vertex[1],res)){
+                                                        res.push_back(vertex[1]);
+                                                        break;
                                                     }
 
                                                 }
 
                                             }
-                                        }else{//ici
-                                            inters=ptintersect(montab[j+1],montab[j+4000],vertex[i],vertex[i+1]);
-                                            double st =fmod(inters.x(),25);
-                                            if(!isequalplanime(inters,res[res.size()-1])&&!invertex(inters,res)&&st!=0)
+                                            }
+                                        }else segment2=false;
 
-                                                res.push_back(inters);
-
-                                        }
 
                             }
                             /*************************************/
-                            if(doIntersect(montab[j],montab[j+4000],vertex[i],vertex[i+1])){
+                            if(segment3){
 
 
-                                        if(collinear(montab[j],montab[j+4000],vertex[i],vertex[i+1])){
-                                            {
+                                        if(collinear(montab[j],montab[j+4000],vertex[0],vertex[1]) && mdxV1==0 && mdyV1==0){
+                                            { if(doIntersect(montab[j],montab[j+4000],vertex[0],vertex[1])){
                                                 float da=distancetwopoints(montab[j],montab[j+4000]);
-                                                float db=distancetwopoints(vertex[i],vertex[i+1]);
+                                                float db=distancetwopoints(vertex[0],vertex[1]);
                                                 if(da<=db){
-                                                        if(!isequalplanime(montab[j],res[res.size()-1])&&!invertex(montab[j+4000],res)){
+                                                        if(!invertex(montab[j],res)){
 
                                                             res.push_back(montab[j]);
+                                                            j=j+3999;
                                                         }
+
+
                                                 }else{
-                                                    if(!isequalplanime(vertex[i],res[res.size()-1]) &&!invertex(vertex[i],res)){
-                                                        res.push_back(vertex[i]);
-                                                        if(!isequalplanime(vertex[i+1],res[res.size()-1])&&!invertex(vertex[i+1],res)){
-                                                        res.push_back(vertex[i+1]);
-                                                        i=i+1;
+                                                    if(!invertex(vertex[1],res)){
+                                                        res.push_back(vertex[1]);
+                                                        break;
                                                         }
                                                     }
 
-                                                }
+                                                }/*
+                                                else if(doIntersect(montab[j],montab[j+1],vertex[0],vertex[1])){
+                                                    inters=ptintersect(montab[j],montab[j+1],vertex[0],vertex[1]);
+                                                    if(!invertex(inters,res))
+                                                        res.push_back(inters);
+                                                    }*/
 
-                                            }
-                                        }else{//ici
-                                            inters=ptintersect(montab[j],montab[j+4000],vertex[i],vertex[i+1]);
-                                            double st =fmod(inters.y(),25);
-                                            if(!isequalplanime(inters,res[res.size()-1])&&!invertex(inters,res)&&st!=0)
 
-                                                res.push_back(inters);
+                                               }
+
 
                                         }
 
+                                           else segment3=false;
+
+
                             }
-                            /*************************************/
+
+
+
+                /**********************************************/
 
 
 
@@ -917,160 +543,66 @@ QVector<QVector3D> plaquage::findintersectpoint(QVector<QVector3D> vertex, QVect
 
 
 
-                       }
-                double mod =fmod(j+1,4000);
+
+
+
+
+
+
+
+
+
+
+                /**********************************************/
+
+
+
+
+
+                if(!segment1&& !segment2&& !segment3){
+                    if(premier){
+                        res.push_back(vertex[0]);
+                        premier=false;
+                    }
+                    if(doIntersect(montab[j],montab[j+1],vertex[0],vertex[1])){
+                    inters=ptintersect(montab[j],montab[j+1],vertex[0],vertex[1]);
+                    if(!invertex(inters,res))
+                        res.push_back(inters);
+                    }
+
+                    if(doIntersect(montab[j],montab[j+4000],vertex[0],vertex[1])){
+                    inters=ptintersect(montab[j],montab[j+4000],vertex[0],vertex[1]);
+                    if(!invertex(inters,res))
+                        res.push_back(inters);
+                    }
+
+                    if(doIntersect(montab[j+4000],montab[j+1],vertex[0],vertex[1])){
+                    inters=ptintersect(montab[j+4000],montab[j+1],vertex[0],vertex[1]);
+                    if(!invertex(inters,res))
+                        res.push_back(inters);
+                    }
+
+
+
+                }
+
+                double mod =fmod(j+2,4000);
                 if(mod==0) j=j+1;
-                if(isequalplanime(res[res.size()-1],vertex[vertex.size()-1])) break;
-                //if(isequalplanime(vertex[0],vertex[vertex.size()-1])) break;
 
 
             }
 
 
+
+        if(!segment1&& !segment2&& !segment3){
+            res.push_front(vertex[1]);
         }
-        //if(!isequalplanime(vertex[0],res[res.size()-1]))
-          //  res.push_back(vertex[vertex.size()-1]);
-
-        //last line
-        //*********************************************************************************
-        res2.push_back(res[res.size()-1]);
-
-        for (unsigned int j=0;j<montab.size()-4001;++j){
-
-            {
-                        if(doIntersect(montab[j],montab[j+1],vertex[0],vertex[vertex.size()-1])){
-
-
-                                    if(collinear(montab[j],montab[j+1],vertex[0],vertex[vertex.size()-1])){
-                                        {
-                                            float da=distancetwopoints(montab[j],montab[j+1]);
-                                            float db=distancetwopoints(vertex[0],vertex[vertex.size()-1]);
-                                            if(da<=db){
-                                                    if(!isequalplanime(montab[j],res2[res2.size()-1])&&!invertex(montab[j],res2)){
-
-                                                        res2.push_back(montab[j]);
-                                                    }
-                                            }else{
-                                                if(!isequalplanime(vertex[0],res2[res2.size()-1])&&!invertex(vertex[vertex.size()-1],res2)){
-                                                    res2.push_back(vertex[0]);
-                                                    if(!isequalplanime(vertex[vertex.size()-1],res2[res.size()-1])&&!invertex(vertex[vertex.size()-1],res2)){
-                                                    res2.push_back(vertex[vertex.size()-1]);
-                                                    break;
-                                                    }
-                                                }
-
-                                            }
-
-                                        }
-                                    }else{//ici
-                                        inters=ptintersect(montab[j],montab[j+1],vertex[0],vertex[vertex.size()-1]);
-                                        if(!isequalplanime(inters,res2[res2.size()-1])&&!invertex(inters,res2))
-
-                                            res2.push_back(inters);
-
-                                    }
-
-                        }
-                        /**************************************************************/
-                        if(doIntersect(montab[j+1],montab[j+4000],vertex[0],vertex[vertex.size()-1])){
-
-
-                                    if(collinear(montab[j+1],montab[j+4000],vertex[0],vertex[vertex.size()-1])){
-                                        {
-                                            float da=distancetwopoints(montab[j+1],montab[j+4000]);
-                                            float db=distancetwopoints(vertex[0],vertex[vertex.size()-1]);
-                                            if(da<=db){
-                                                    if(!isequalplanime(montab[j+1],res2[res.size()-1])&&!invertex(montab[j+4000],res2)){
-
-                                                        res2.push_back(montab[j+1]);
-                                                    }
-                                            }else{
-                                                if(!isequalplanime(vertex[0],res2[res2.size()-1]) &&!invertex(vertex[0],res2)){
-                                                    res2.push_back(vertex[0]);
-                                                    if(!isequalplanime(vertex[vertex.size()-1],res2[res2.size()-1])&&!invertex(vertex[vertex.size()-1],res2)){
-                                                    res2.push_back(vertex[vertex.size()-1]);
-                                                    break;
-                                                    }
-                                                }
-
-                                            }
-
-                                        }
-                                    }else{//ici
-                                        inters=ptintersect(montab[j+1],montab[j+4000],vertex[0],vertex[vertex.size()-1]);
-                                        double st =fmod(inters.x(),25);
-                                        if(!isequalplanime(inters,res2[res2.size()-1])&&!invertex(inters,res2)&&st!=0)
-
-                                            res2.push_back(inters);
-
-                                    }
-
-                        }
-                        /*************************************/
-                        if(doIntersect(montab[j],montab[j+4000],vertex[0],vertex[vertex.size()-1])){
-
-
-                                    if(collinear(montab[j],montab[j+4000],vertex[0],vertex[vertex.size()-1])){
-                                        {
-                                            float da=distancetwopoints(montab[j],montab[j+4000]);
-                                            float db=distancetwopoints(vertex[0],vertex[vertex.size()-1]);
-                                            if(da<=db){
-                                                    if(!isequalplanime(montab[j],res2[res2.size()-1])&&!invertex(montab[j+4000],res2)){
-
-                                                        res2.push_back(montab[j]);
-                                                    }
-                                            }else{
-                                                if(!isequalplanime(vertex[0],res2[res2.size()-1]) &&!invertex(vertex[0],res2)){
-                                                    res.push_back(vertex[0]);
-                                                    if(!isequalplanime(vertex[vertex.size()-1],res2[res2.size()-1])&&!invertex(vertex[vertex.size()-1],res2)){
-                                                    res2.push_back(vertex[vertex.size()-1]);
-                                                    break;
-                                                    }
-                                                }
-
-                                            }
-
-                                        }
-                                    }else{//ici
-                                        inters=ptintersect(montab[j],montab[j+4000],vertex[0],vertex[vertex.size()-1]);
-                                        double st =fmod(inters.y(),25);
-                                        if(!isequalplanime(inters,res2[res2.size()-1])&&!invertex(inters,res2)&&st!=0)
-
-                                            res2.push_back(inters);
-
-                                    }
-
-                        }
-                        /*************************************/
+QVector<QVector3D> resfinal;
+resfinal=trieintersect(vertex,res);
 
 
 
-
-
-
-
-
-                   }
-            double mod =fmod(j+1,4000);
-            if(mod==0) j=j+1;
-            if(isequalplanime(res2[res2.size()-1],vertex[vertex.size()-1])) break;
-            //if(isequalplanime(vertex[0],vertex[vertex.size()-1])) break;
-
-
-        }
-
-        // res2 dans Res
-
-        for(unsigned int i=1;i<=res2.size();++i){
-             if(!isequalplanime(res2[res2.size()-i],res[res.size()-1])&&!isequalplanime(res2[res2.size()-i],vertex[0])&&!invertex(res2[res2.size()-i],res))
-                 res.push_back(res2[res2.size()-i]);
-
-        }
-
-
-
-
- return res;
+ return resfinal;
 }
 //************************************************boundsintesction*******************
 QVector<float> plaquage::boundsofintersection(QVector<QVector3D> intersection){
@@ -1110,4 +642,76 @@ QVector<QVector3D> plaquage::sortofintersection(QVector<QVector3D> intersection,
 }
 void plaquage::setmontab(QVector<QVector3D> tab){
     montab=tab;
+}
+//**************************************************************
+QVector<QVector3D>  plaquage::trieintersect(QVector<QVector3D> vertex,QVector<QVector3D> intesct){
+    QVector<QVector3D> res;
+
+
+    for(unsigned int k=0;k<intesct.size();++k){
+        if(isequalplanime(vertex[0],intesct[k])){
+         res.push_back(intesct[k]);
+            break;
+        }
+
+    }
+
+    int indicemin;
+    for(unsigned int i=0;i<res.size();++i){
+        float dmin=distancetwopoints(vertex[0],vertex[1]);
+        int j=0;
+        for(;j<intesct.size();++j){
+            float d=distancetwopoints(res[i],intesct[j]);
+            if(invertex(intesct[j],res)){
+                continue;
+
+            }else
+            if(d<dmin){
+                dmin=d;
+                indicemin=j;
+
+            }
+
+
+
+        }
+       if(!invertex(intesct[indicemin],res)){
+           if(!isequalplanime(vertex[0],intesct[indicemin]))
+        res.push_back(intesct[indicemin]);
+        }
+
+
+    }
+
+     if(!invertex(vertex[1],res)){
+        for(unsigned int k=0;k<intesct.size();++k){
+            if(isequalplanime(vertex[1],intesct[k])){
+             res.push_back(intesct[k]);
+                break;
+            }
+         }
+
+    }
+
+
+    return res;
+
+
+
+}
+//************************Zeal************
+void plaquage::setZreal(QVector<QVector3D> points){
+QVector<QVector3D>tabZreal;
+Plan A;
+QVector<float> normal;
+tabZreal=getintersection(points);
+int k=0;
+for(int j=0;j<tabZreal.size()-3;j=j+4){
+    normal=A.normale(tabZreal[j+1],tabZreal[j+2],tabZreal[j+3]);
+    QVector<float> z;
+    z=A.planeEquation(tabZreal[j+1],tabZreal[j],normal);
+    points[k].setZ(z[2]);
+    k=k+1;
+
+}
 }

@@ -37,11 +37,15 @@ void mnt::loadXYZ(const QString& chemin){
     if(fichier.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         QTextStream flux(&fichier);
+        int compt=0;
+
 
         while(!flux.atEnd())
         {
+            if(compt>=400000) break;
             double x,y,z;
             flux >> x >> y >> z ;
+            compt=compt+1;
 
                 if(x>xmax)
                     {
@@ -85,6 +89,7 @@ void mnt::loadXYZ(const QString& chemin){
             p.setZ(z);
             m_tabDonnees.push_back(p);
             ++nbPoint;
+
          }
         fichier.close();
         ligne = nbPoint / colonne;
